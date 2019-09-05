@@ -9,7 +9,9 @@
     }
   ],
   "require": {
-    "php": ">=7.1"
+    "php": ">=7.1",
+    "spryker/cart-extension": "^4.0.0",
+    "fond-of-spryker/allowed-product-quantity": "dev-master"
   },
   "require-dev": {
     "spryker/code-sniffer": "^0.12",
@@ -28,7 +30,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "FondOfSpryker\\": "tests/FondOfSpryker/"
+      "FondOfSpryker\\": "tests/FondOfSpryker/",
+      "Generated\\": "src/Generated/"
     }
   }
 }
