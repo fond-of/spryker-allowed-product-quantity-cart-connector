@@ -75,7 +75,7 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
             );
         }
 
-        if ($max !== null && $quantity < $max) {
+        if ($max !== null && $quantity > $max) {
             $messages[] = $this->createMessage(
                 static::MESSAGE_TYPE_ERROR,
                 static::MESSAGE_QUANTITY_MAX_NOT_FULFILLED

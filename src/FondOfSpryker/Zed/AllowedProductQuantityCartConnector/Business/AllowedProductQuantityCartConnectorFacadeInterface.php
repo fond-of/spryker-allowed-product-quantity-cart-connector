@@ -9,7 +9,7 @@ interface AllowedProductQuantityCartConnectorFacadeInterface
 {
     /**
      * Specification:
-     * - Validate quote quantities after reload items.
+     * - Validate quote quantities.
      * - Check if quantity is greater then specific min.
      * - Check if quantity is lower then specific max.
      * - Check if quantity is in specific interval.
@@ -21,7 +21,7 @@ interface AllowedProductQuantityCartConnectorFacadeInterface
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    public function validateQuoteAfterReloadItems(QuoteTransfer $quoteTransfer): QuoteTransfer;
+    public function validateQuote(QuoteTransfer $quoteTransfer): QuoteTransfer;
 
     /**
      * Specification:

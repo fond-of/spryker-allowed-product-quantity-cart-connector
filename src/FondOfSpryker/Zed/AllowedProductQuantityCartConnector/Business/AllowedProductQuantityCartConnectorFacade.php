@@ -20,7 +20,7 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    public function validateQuoteAfterReloadItems(QuoteTransfer $quoteTransfer): QuoteTransfer
+    public function validateQuote(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
         return $this->getFactory()->createQuoteValidator()->validate($quoteTransfer);
     }
