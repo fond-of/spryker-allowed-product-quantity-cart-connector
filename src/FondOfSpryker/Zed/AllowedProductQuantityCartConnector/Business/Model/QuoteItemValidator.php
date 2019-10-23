@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\ProductAbstractTransfer;
 class QuoteItemValidator implements QuoteItemValidatorInterface
 {
     protected const MESSAGE_TYPE_ERROR = 'error';
+    protected const INTERVAL_TRANSLATION_PARAMETER = '%interval%';
 
     protected const MESSAGE_QUANTITY_MIN_NOT_FULFILLED = 'allowed_product_quantity_cart_connector.quantity_min_not_fulfilled';
     protected const MESSAGE_QUANTITY_MAX_NOT_FULFILLED = 'allowed_product_quantity_cart_connector.quantity_max_not_fulfilled';
@@ -85,7 +86,10 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
         if ($interval !== null && $quantity % $interval !== 0) {
             $messages[] = $this->createMessage(
                 static::MESSAGE_TYPE_ERROR,
-                static::MESSAGE_QUANTITY_MAX_NOT_FULFILLED
+                static::MESSAGE_QUANTITY_INTERVAL_NOT_FULFILLED,
+                [
+                    static::INTERVAL_TRANSLATION_PARAMETER => $interval
+                ]
             );
         }
 
@@ -95,11 +99,15 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
     /**
      * @param string $type
      * @param string $value
+     * @param array $parameters
      *
      * @return \Generated\Shared\Transfer\MessageTransfer
      */
-    protected function createMessage(string $type, string $value): MessageTransfer
+    protected function createMessage(string $type, string $value, array $parameters = []): MessageTransfer
     {
-        return (new MessageTransfer())->setType($type)->setValue($value);
+        return (new MessageTransfer())
+            ->setType($type)
+            ->setValue($value)
+            ->setParameters($parameters);
     }
 }
