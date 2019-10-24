@@ -85,7 +85,7 @@ class AllowedProductQuantityCartConnectorDependencyProviderTest extends Unit
             $this->containerMock,
             $this->allowedProductQuantityCartConnectorDependencyProvider->provideBusinessLayerDependencies($this->containerMock)
         );
-        var_dump($this->containerMock);
+
         $this->assertInstanceOf(
             AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge::class,
             $this->containerMock[AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY]
