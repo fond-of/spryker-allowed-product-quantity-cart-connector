@@ -32,8 +32,6 @@ class AllowedProductQuantityCartConnectorBusinessFactory extends AbstractBusines
     }
 
     /**
-     * @throws
-     *
      * @return \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface
      */
     protected function getAllowedProductQuantityFacade(): AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface
