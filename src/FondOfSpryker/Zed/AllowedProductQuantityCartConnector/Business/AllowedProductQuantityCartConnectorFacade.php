@@ -12,7 +12,7 @@ use Spryker\Zed\Kernel\Business\AbstractFacade;
 class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implements AllowedProductQuantityCartConnectorFacadeInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *
@@ -26,7 +26,7 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @api
      *

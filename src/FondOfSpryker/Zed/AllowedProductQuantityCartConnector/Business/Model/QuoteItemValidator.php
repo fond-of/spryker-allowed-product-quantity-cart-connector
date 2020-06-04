@@ -88,7 +88,7 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
                 static::MESSAGE_TYPE_ERROR,
                 static::MESSAGE_QUANTITY_INTERVAL_NOT_FULFILLED,
                 [
-                    static::INTERVAL_TRANSLATION_PARAMETER => $interval
+                    static::INTERVAL_TRANSLATION_PARAMETER => $interval,
                 ]
             );
         }
