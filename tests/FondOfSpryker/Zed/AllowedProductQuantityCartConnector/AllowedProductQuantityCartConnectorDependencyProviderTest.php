@@ -83,12 +83,12 @@ class AllowedProductQuantityCartConnectorDependencyProviderTest extends Unit
 
         $this->assertEquals(
             $this->containerMock,
-            $this->allowedProductQuantityCartConnectorDependencyProvider->provideBusinessLayerDependencies($this->containerMock)
+            $this->allowedProductQuantityCartConnectorDependencyProvider->provideBusinessLayerDependencies($this->containerMock),
         );
 
         $this->assertInstanceOf(
             AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge::class,
-            $this->containerMock[AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY]
+            $this->containerMock[AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY],
         );
     }
 }

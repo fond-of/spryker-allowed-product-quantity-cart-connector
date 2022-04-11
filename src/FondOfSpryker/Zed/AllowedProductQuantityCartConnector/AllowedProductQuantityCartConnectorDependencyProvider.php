@@ -8,6 +8,9 @@ use Spryker\Zed\Kernel\Container;
 
 class AllowedProductQuantityCartConnectorDependencyProvider extends AbstractBundleDependencyProvider
 {
+    /**
+     * @var string
+     */
     public const FACADE_ALLOWED_PRODUCT_QUANTITY = 'FACADE_ALLOWED_PRODUCT_QUANTITY';
 
     /**
@@ -33,7 +36,7 @@ class AllowedProductQuantityCartConnectorDependencyProvider extends AbstractBund
     {
         $container[static::FACADE_ALLOWED_PRODUCT_QUANTITY] = function (Container $container) {
             return new AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge(
-                $container->getLocator()->allowedProductQuantity()->facade()
+                $container->getLocator()->allowedProductQuantity()->facade(),
             );
         };
 

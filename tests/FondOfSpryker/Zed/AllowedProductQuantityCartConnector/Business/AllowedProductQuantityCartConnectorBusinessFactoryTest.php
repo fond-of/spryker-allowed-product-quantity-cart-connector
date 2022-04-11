@@ -60,7 +60,6 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
      */
     public function testCreateQuoteValidator(): void
     {
-
         $this->containerMock->expects($this->atLeastOnce())
             ->method('has')
             ->willReturn(true);
