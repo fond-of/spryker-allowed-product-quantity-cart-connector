@@ -32,7 +32,7 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
      *
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      *
-     * @return \Generated\Shared\Transfer\MessageTransfer[]
+     * @return array<\Generated\Shared\Transfer\MessageTransfer>
      */
     public function validateQuoteItem(ItemTransfer $itemTransfer): array
     {

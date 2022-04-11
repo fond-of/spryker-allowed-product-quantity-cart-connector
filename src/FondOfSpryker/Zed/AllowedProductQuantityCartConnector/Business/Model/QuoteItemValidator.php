@@ -10,11 +10,29 @@ use Generated\Shared\Transfer\ProductAbstractTransfer;
 
 class QuoteItemValidator implements QuoteItemValidatorInterface
 {
+    /**
+     * @var string
+     */
     protected const MESSAGE_TYPE_ERROR = 'error';
+
+    /**
+     * @var string
+     */
     protected const INTERVAL_TRANSLATION_PARAMETER = '%interval%';
 
+    /**
+     * @var string
+     */
     protected const MESSAGE_QUANTITY_MIN_NOT_FULFILLED = 'allowed_product_quantity_cart_connector.quantity_min_not_fulfilled';
+
+    /**
+     * @var string
+     */
     protected const MESSAGE_QUANTITY_MAX_NOT_FULFILLED = 'allowed_product_quantity_cart_connector.quantity_max_not_fulfilled';
+
+    /**
+     * @var string
+     */
     protected const MESSAGE_QUANTITY_INTERVAL_NOT_FULFILLED = 'allowed_product_quantity_cart_connector.quantity_interval_not_fulfilled';
 
     /**
@@ -34,7 +52,7 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      *
-     * @return \Generated\Shared\Transfer\MessageTransfer[]
+     * @return array<\Generated\Shared\Transfer\MessageTransfer>
      */
     public function validate(ItemTransfer $itemTransfer): array
     {
@@ -57,7 +75,7 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      * @param \Generated\Shared\Transfer\AllowedProductQuantityTransfer $allowedProductQuantityTransfer
      *
-     * @return \Generated\Shared\Transfer\MessageTransfer[]
+     * @return array<\Generated\Shared\Transfer\MessageTransfer>
      */
     protected function validateQuantity(
         ItemTransfer $itemTransfer,
@@ -72,14 +90,14 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
         if ($min !== null && $quantity < $min) {
             $messages[] = $this->createMessage(
                 static::MESSAGE_TYPE_ERROR,
-                static::MESSAGE_QUANTITY_MIN_NOT_FULFILLED
+                static::MESSAGE_QUANTITY_MIN_NOT_FULFILLED,
             );
         }
 
         if ($max !== null && $quantity > $max) {
             $messages[] = $this->createMessage(
                 static::MESSAGE_TYPE_ERROR,
-                static::MESSAGE_QUANTITY_MAX_NOT_FULFILLED
+                static::MESSAGE_QUANTITY_MAX_NOT_FULFILLED,
             );
         }
 
@@ -89,7 +107,7 @@ class QuoteItemValidator implements QuoteItemValidatorInterface
                 static::MESSAGE_QUANTITY_INTERVAL_NOT_FULFILLED,
                 [
                     static::INTERVAL_TRANSLATION_PARAMETER => $interval,
-                ]
+                ],
             );
         }
 
