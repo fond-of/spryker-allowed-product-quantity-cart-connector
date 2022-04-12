@@ -22,9 +22,7 @@ class AllowedProductQuantityCartConnectorDependencyProvider extends AbstractBund
     {
         $container = parent::provideBusinessLayerDependencies($container);
 
-        $container = $this->addAllowedProductQuantityFacade($container);
-
-        return $container;
+        return $this->addAllowedProductQuantityFacade($container);
     }
 
     /**
@@ -34,7 +32,7 @@ class AllowedProductQuantityCartConnectorDependencyProvider extends AbstractBund
      */
     protected function addAllowedProductQuantityFacade(Container $container): Container
     {
-        $container[static::FACADE_ALLOWED_PRODUCT_QUANTITY] = function (Container $container) {
+        $container[static::FACADE_ALLOWED_PRODUCT_QUANTITY] = static function (Container $container) {
             return new AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge(
                 $container->getLocator()->allowedProductQuantity()->facade(),
             );

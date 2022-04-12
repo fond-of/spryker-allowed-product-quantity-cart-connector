@@ -1,6 +1,6 @@
 <?php
 
-namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model;
+namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator;
 
 use Generated\Shared\Transfer\QuoteTransfer;
 

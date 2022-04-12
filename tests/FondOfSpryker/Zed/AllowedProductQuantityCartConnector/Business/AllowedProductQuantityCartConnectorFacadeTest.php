@@ -3,22 +3,27 @@
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business;
 
 use Codeception\Test\Unit;
-use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteItemValidatorInterface;
-use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteValidatorInterface;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidatorInterface;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 class AllowedProductQuantityCartConnectorFacadeTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\AllowedProductQuantityCartConnectorFacade
-     */
-    protected $allowedProductQuantityCartConnectorFacade;
-
-    /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\AllowedProductQuantityCartConnectorBusinessFactory
      */
-    protected $allowedProductQuantityCartConnectorBusinessFactoryMock;
+    protected $factoryMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidatorInterface
+     */
+    protected $quoteValidatorMock;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface
+     */
+    protected $itemValidatorMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\QuoteTransfer
@@ -26,19 +31,14 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
     protected $quoteTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteValidatorInterface
-     */
-    protected $quoteValidatorInterfaceMock;
-
-    /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\ItemTransfer
      */
     protected $itemTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteItemValidatorInterface
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\AllowedProductQuantityCartConnectorFacade
      */
-    protected $quoteItemValidatorInterfaceMock;
+    protected $facade;
 
     /**
      * @return void
@@ -47,7 +47,7 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
     {
         parent::_before();
 
-        $this->allowedProductQuantityCartConnectorBusinessFactoryMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorBusinessFactory::class)
+        $this->factoryMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorBusinessFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -55,11 +55,11 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->quoteValidatorInterfaceMock = $this->getMockBuilder(QuoteValidatorInterface::class)
+        $this->quoteValidatorMock = $this->getMockBuilder(QuoteValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->quoteItemValidatorInterfaceMock = $this->getMockBuilder(QuoteItemValidatorInterface::class)
+        $this->itemValidatorMock = $this->getMockBuilder(ItemValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -67,8 +67,8 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->allowedProductQuantityCartConnectorFacade = new AllowedProductQuantityCartConnectorFacade();
-        $this->allowedProductQuantityCartConnectorFacade->setFactory($this->allowedProductQuantityCartConnectorBusinessFactoryMock);
+        $this->facade = new AllowedProductQuantityCartConnectorFacade();
+        $this->facade->setFactory($this->factoryMock);
     }
 
     /**
@@ -76,11 +76,16 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
      */
     public function testValidateQuote(): void
     {
-        $this->allowedProductQuantityCartConnectorBusinessFactoryMock->expects($this->atLeastOnce())
+        $this->factoryMock->expects(static::atLeastOnce())
             ->method('createQuoteValidator')
-            ->willReturn($this->quoteValidatorInterfaceMock);
+            ->willReturn($this->quoteValidatorMock);
 
-        $this->assertInstanceOf(QuoteTransfer::class, $this->allowedProductQuantityCartConnectorFacade->validateQuote($this->quoteTransferMock));
+        $this->quoteValidatorMock->expects(static::atLeastOnce())
+            ->method('validate')
+            ->with($this->quoteTransferMock)
+            ->willReturn($this->quoteTransferMock);
+
+        static::assertEquals($this->quoteTransferMock, $this->facade->validateQuote($this->quoteTransferMock));
     }
 
     /**
@@ -88,10 +93,20 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
      */
     public function testValidateQuoteItem(): void
     {
-        $this->allowedProductQuantityCartConnectorBusinessFactoryMock->expects($this->atLeastOnce())
-            ->method('createQuoteItemValidator')
-            ->willReturn($this->quoteItemValidatorInterfaceMock);
+        $messages = [];
 
-        $this->assertIsArray($this->allowedProductQuantityCartConnectorFacade->validateQuoteItem($this->itemTransferMock));
+        $this->factoryMock->expects(static::atLeastOnce())
+            ->method('createItemValidator')
+            ->willReturn($this->itemValidatorMock);
+
+        $this->itemValidatorMock->expects(static::atLeastOnce())
+            ->method('validate')
+            ->with($this->itemTransferMock, null)
+            ->willReturn($messages);
+
+        static::assertEquals(
+            $messages,
+            $this->facade->validateQuoteItem($this->itemTransferMock),
+        );
     }
 }

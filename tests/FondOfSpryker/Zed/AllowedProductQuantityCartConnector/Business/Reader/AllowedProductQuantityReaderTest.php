@@ -1,0 +1,158 @@
+<?php
+
+namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader;
+
+use Codeception\Test\Unit;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface;
+use Generated\Shared\Transfer\AllowedProductQuantityResponseTransfer;
+use Generated\Shared\Transfer\AllowedProductQuantityTransfer;
+use Generated\Shared\Transfer\ItemTransfer;
+use Generated\Shared\Transfer\ProductAbstractTransfer;
+
+class AllowedProductQuantityReaderTest extends Unit
+{
+    /**
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $allowedProductQuantityFacadeMock;
+
+    /**
+     * @var \Generated\Shared\Transfer\ItemTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $itemTransferMock;
+
+    /**
+     * @var \Generated\Shared\Transfer\AllowedProductQuantityResponseTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $allowedProductQuantityResponseTransferMock;
+
+    /**
+     * @var \Generated\Shared\Transfer\AllowedProductQuantityTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $allowedProductQuantityTransferMock;
+
+    /**
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader\AllowedProductQuantityReader
+     */
+    protected $allowedProductQuantityReader;
+
+    /**
+     * @return void
+     */
+    protected function _before(): void
+    {
+        parent::_before();
+
+        $this->allowedProductQuantityFacadeMock = $this->getMockBuilder(
+            AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface::class,
+        )->disableOriginalConstructor()
+            ->getMock();
+
+        $this->itemTransferMock = $this->getMockBuilder(ItemTransfer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->allowedProductQuantityResponseTransferMock = $this->getMockBuilder(
+            AllowedProductQuantityResponseTransfer::class,
+        )->disableOriginalConstructor()
+            ->getMock();
+
+        $this->allowedProductQuantityTransferMock = $this->getMockBuilder(
+            AllowedProductQuantityTransfer::class,
+        )->disableOriginalConstructor()
+            ->getMock();
+
+        $this->allowedProductQuantityReader = new AllowedProductQuantityReader(
+            $this->allowedProductQuantityFacadeMock,
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetByItem(): void
+    {
+        $idProductAbstract = 1;
+
+        $this->itemTransferMock->expects(static::atLeastOnce())
+            ->method('getIdProductAbstract')
+            ->willReturn($idProductAbstract);
+
+        $this->allowedProductQuantityFacadeMock->expects(static::atLeastOnce())
+            ->method('findProductAbstractAllowedQuantity')
+            ->with(
+                static::callback(
+                    static function (ProductAbstractTransfer $productAbstractTransfer) use ($idProductAbstract) {
+                        return $productAbstractTransfer->getIdProductAbstract() === $idProductAbstract;
+                    },
+                ),
+            )->willReturn($this->allowedProductQuantityResponseTransferMock);
+
+        $this->allowedProductQuantityResponseTransferMock->expects(static::atLeastOnce())
+            ->method('getAllowedProductQuantityTransfer')
+            ->willReturn($this->allowedProductQuantityTransferMock);
+
+        $this->allowedProductQuantityResponseTransferMock->expects(static::atLeastOnce())
+            ->method('getIsSuccessful')
+            ->willReturn(true);
+
+        static::assertEquals(
+            $this->allowedProductQuantityTransferMock,
+            $this->allowedProductQuantityReader->getByItem($this->itemTransferMock),
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetByItemWithoutIdProductAbstract(): void
+    {
+        $idProductAbstract = null;
+
+        $this->itemTransferMock->expects(static::atLeastOnce())
+            ->method('getIdProductAbstract')
+            ->willReturn($idProductAbstract);
+
+        $this->allowedProductQuantityFacadeMock->expects(static::never())
+            ->method('findProductAbstractAllowedQuantity');
+
+        static::assertEquals(
+            null,
+            $this->allowedProductQuantityReader->getByItem($this->itemTransferMock),
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetByItemWithoutResult(): void
+    {
+        $idProductAbstract = 1;
+
+        $this->itemTransferMock->expects(static::atLeastOnce())
+            ->method('getIdProductAbstract')
+            ->willReturn($idProductAbstract);
+
+        $this->allowedProductQuantityFacadeMock->expects(static::atLeastOnce())
+            ->method('findProductAbstractAllowedQuantity')
+            ->with(
+                static::callback(
+                    static function (ProductAbstractTransfer $productAbstractTransfer) use ($idProductAbstract) {
+                        return $productAbstractTransfer->getIdProductAbstract() === $idProductAbstract;
+                    },
+                ),
+            )->willReturn($this->allowedProductQuantityResponseTransferMock);
+
+        $this->allowedProductQuantityResponseTransferMock->expects(static::atLeastOnce())
+            ->method('getAllowedProductQuantityTransfer')
+            ->willReturn(null);
+
+        $this->allowedProductQuantityResponseTransferMock->expects(static::never())
+            ->method('getIsSuccessful');
+
+        static::assertEquals(
+            null,
+            $this->allowedProductQuantityReader->getByItem($this->itemTransferMock),
+        );
+    }
+}

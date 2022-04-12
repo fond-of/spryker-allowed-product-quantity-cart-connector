@@ -5,7 +5,7 @@ namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business;
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorConfig;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorDependencyProvider;
-use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteValidatorInterface;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidatorInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface;
 use Spryker\Zed\Kernel\Container;
 
