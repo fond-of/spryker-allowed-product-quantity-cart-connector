@@ -36,6 +36,6 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
      */
     public function validateQuoteItem(ItemTransfer $itemTransfer): array
     {
-        return $this->getFactory()->createQuoteItemValidator()->validate($itemTransfer);
+        return $this->getFactory()->createItemValidator()->validate($itemTransfer);
     }
 }

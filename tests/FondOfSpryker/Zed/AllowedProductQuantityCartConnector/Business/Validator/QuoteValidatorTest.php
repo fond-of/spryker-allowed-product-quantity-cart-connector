@@ -1,6 +1,6 @@
 <?php
 
-namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model;
+namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator;
 
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\ItemTransfer;
@@ -10,14 +10,14 @@ use Generated\Shared\Transfer\QuoteTransfer;
 class QuoteValidatorTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteValidator
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidator
      */
     protected $quoteValidator;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteItemValidatorInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface
      */
-    protected $quoteItemValidatorInterfaceMock;
+    protected $itemValidatorMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\QuoteTransfer
@@ -51,7 +51,7 @@ class QuoteValidatorTest extends Unit
     {
         parent::_before();
 
-        $this->quoteItemValidatorInterfaceMock = $this->getMockBuilder(QuoteItemValidatorInterface::class)
+        $this->itemValidatorMock = $this->getMockBuilder(ItemValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -75,7 +75,7 @@ class QuoteValidatorTest extends Unit
             $this->messageTransferMock,
         ];
 
-        $this->quoteValidator = new QuoteValidator($this->quoteItemValidatorInterfaceMock);
+        $this->quoteValidator = new QuoteValidator($this->itemValidatorMock);
     }
 
     /**
@@ -87,7 +87,7 @@ class QuoteValidatorTest extends Unit
             ->method('getItems')
             ->willReturn($this->itemTransfers);
 
-        $this->quoteItemValidatorInterfaceMock->expects($this->atLeastOnce())
+        $this->itemValidatorMock->expects($this->atLeastOnce())
             ->method('validate')
             ->willReturn($this->messageTransfers);
 

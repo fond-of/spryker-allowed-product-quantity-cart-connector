@@ -1,22 +1,22 @@
 <?php
 
-namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model;
+namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator;
 
 use Generated\Shared\Transfer\QuoteTransfer;
 
 class QuoteValidator implements QuoteValidatorInterface
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteItemValidatorInterface
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface
      */
-    protected $quoteItemValidator;
+    protected $itemValidator;
 
     /**
-     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Model\QuoteItemValidatorInterface $quoteItemValidator
+     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface $quoteItemValidator
      */
-    public function __construct(QuoteItemValidatorInterface $quoteItemValidator)
+    public function __construct(ItemValidatorInterface $quoteItemValidator)
     {
-        $this->quoteItemValidator = $quoteItemValidator;
+        $this->itemValidator = $quoteItemValidator;
     }
 
     /**
@@ -27,7 +27,7 @@ class QuoteValidator implements QuoteValidatorInterface
     public function validate(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
         foreach ($quoteTransfer->getItems() as $itemTransfer) {
-            $messages = $this->quoteItemValidator->validate($itemTransfer);
+            $messages = $this->itemValidator->validate($itemTransfer);
 
             foreach ($messages as $message) {
                 $itemTransfer->addValidationMessage($message);
