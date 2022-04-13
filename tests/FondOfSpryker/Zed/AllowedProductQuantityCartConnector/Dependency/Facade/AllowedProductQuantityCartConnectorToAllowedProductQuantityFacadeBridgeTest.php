@@ -5,24 +5,35 @@ namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facad
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\AllowedProductQuantity\Business\AllowedProductQuantityFacadeInterface;
 use Generated\Shared\Transfer\AllowedProductQuantityResponseTransfer;
+use Generated\Shared\Transfer\AllowedProductQuantityTransfer;
 use Generated\Shared\Transfer\ProductAbstractTransfer;
 
 class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge
-     */
-    protected $allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge;
-
-    /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantity\Business\AllowedProductQuantityFacadeInterface
      */
-    protected $allowedProductQuantityFacadeInterfaceMock;
+    protected $facadeMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\ProductAbstractTransfer
      */
     protected $productAbstractTransferMock;
+
+    /**
+     * @var \Generated\Shared\Transfer\AllowedProductQuantityResponseTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $allowedProductQuantityResponseTransferMock;
+
+    /**
+     * @var \Generated\Shared\Transfer\AllowedProductQuantityTransfer|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $allowedProductQuantityTransferMock;
+
+    /**
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge
+     */
+    protected $bridge;
 
     /**
      * @return void
@@ -31,7 +42,7 @@ class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTes
     {
         parent::_before();
 
-        $this->allowedProductQuantityFacadeInterfaceMock = $this->getMockBuilder(AllowedProductQuantityFacadeInterface::class)
+        $this->facadeMock = $this->getMockBuilder(AllowedProductQuantityFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -39,7 +50,15 @@ class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTes
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge = new AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge($this->allowedProductQuantityFacadeInterfaceMock);
+        $this->allowedProductQuantityResponseTransferMock = $this->getMockBuilder(AllowedProductQuantityResponseTransfer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->allowedProductQuantityTransferMock = $this->getMockBuilder(AllowedProductQuantityTransfer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->bridge = new AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge($this->facadeMock);
     }
 
     /**
@@ -47,6 +66,33 @@ class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTes
      */
     public function testFindProductAbstractAllowedQuantity(): void
     {
-        $this->assertInstanceOf(AllowedProductQuantityResponseTransfer::class, $this->allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridge->findProductAbstractAllowedQuantity($this->productAbstractTransferMock));
+        $this->facadeMock->expects(static::atLeastOnce())
+            ->method('findProductAbstractAllowedQuantity')
+            ->with($this->productAbstractTransferMock)
+            ->willReturn($this->allowedProductQuantityResponseTransferMock);
+
+        static::assertEquals(
+            $this->allowedProductQuantityResponseTransferMock,
+            $this->bridge->findProductAbstractAllowedQuantity($this->productAbstractTransferMock),
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testFindGroupedProductAbstractAllowedQuantitiesByAbstractSkus(): void
+    {
+        $abstractSkus = ['FOO-001-001'];
+        $allowedProductQuantityTransferMocks = [$abstractSkus[0] => $this->allowedProductQuantityTransferMock];
+
+        $this->facadeMock->expects(static::atLeastOnce())
+            ->method('findGroupedProductAbstractAllowedQuantitiesByAbstractSkus')
+            ->with($abstractSkus)
+            ->willReturn($allowedProductQuantityTransferMocks);
+
+        static::assertEquals(
+            $allowedProductQuantityTransferMocks,
+            $this->bridge->findGroupedProductAbstractAllowedQuantitiesByAbstractSkus($abstractSkus),
+        );
     }
 }

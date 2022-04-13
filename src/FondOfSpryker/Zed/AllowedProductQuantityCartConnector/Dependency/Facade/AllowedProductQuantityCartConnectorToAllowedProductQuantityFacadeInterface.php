@@ -15,4 +15,11 @@ interface AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInter
     public function findProductAbstractAllowedQuantity(
         ProductAbstractTransfer $productAbstractTransfer
     ): AllowedProductQuantityResponseTransfer;
+
+    /**
+     * @param array<string> $abstractSkus
+     *
+     * @return array<string, \Generated\Shared\Transfer\AllowedProductQuantityTransfer>
+     */
+    public function findGroupedProductAbstractAllowedQuantitiesByAbstractSkus(array $abstractSkus): array;
 }
