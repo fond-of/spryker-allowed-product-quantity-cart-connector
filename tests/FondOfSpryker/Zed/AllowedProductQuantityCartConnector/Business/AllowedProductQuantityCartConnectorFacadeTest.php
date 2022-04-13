@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business;
 
+use ArrayObject;
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidatorInterface;
@@ -81,7 +82,7 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
             ->willReturn($this->quoteValidatorMock);
 
         $this->quoteValidatorMock->expects(static::atLeastOnce())
-            ->method('validate')
+            ->method('validateAndAppendResult')
             ->with($this->quoteTransferMock)
             ->willReturn($this->quoteTransferMock);
 
@@ -93,7 +94,7 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
      */
     public function testValidateQuoteItem(): void
     {
-        $messages = [];
+        $messageTransfers = new ArrayObject();
 
         $this->factoryMock->expects(static::atLeastOnce())
             ->method('createItemValidator')
@@ -102,10 +103,10 @@ class AllowedProductQuantityCartConnectorFacadeTest extends Unit
         $this->itemValidatorMock->expects(static::atLeastOnce())
             ->method('validate')
             ->with($this->itemTransferMock, null)
-            ->willReturn($messages);
+            ->willReturn($messageTransfers);
 
         static::assertEquals(
-            $messages,
+            $messageTransfers->getArrayCopy(),
             $this->facade->validateQuoteItem($this->itemTransferMock),
         );
     }

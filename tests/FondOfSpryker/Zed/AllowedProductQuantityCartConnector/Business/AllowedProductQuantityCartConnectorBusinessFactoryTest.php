@@ -5,7 +5,7 @@ namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business;
 use Codeception\Test\Unit;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorConfig;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorDependencyProvider;
-use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidatorInterface;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidator;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface;
 use Spryker\Zed\Kernel\Container;
 
@@ -19,7 +19,7 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorConfig
      */
-    protected $allowedProductQuantityCartConnectorConfigMock;
+    protected $configMock;
 
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\Spryker\Zed\Kernel\Container
@@ -29,7 +29,7 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface
      */
-    protected $allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterfaceMock;
+    protected $allowedProductQuantityFacadeMock;
 
     /**
      * @return void
@@ -38,11 +38,11 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
     {
         parent::_before();
 
-        $this->allowedProductQuantityCartConnectorConfigMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorConfig::class)
+        $this->configMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterfaceMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface::class)
+        $this->allowedProductQuantityFacadeMock = $this->getMockBuilder(AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,7 +52,7 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
 
         $this->allowedProductQuantityCartConnectorBusinessFactory = new AllowedProductQuantityCartConnectorBusinessFactory();
         $this->allowedProductQuantityCartConnectorBusinessFactory->setContainer($this->containerMock);
-        $this->allowedProductQuantityCartConnectorBusinessFactory->setConfig($this->allowedProductQuantityCartConnectorConfigMock);
+        $this->allowedProductQuantityCartConnectorBusinessFactory->setConfig($this->configMock);
     }
 
     /**
@@ -66,9 +66,18 @@ class AllowedProductQuantityCartConnectorBusinessFactoryTest extends Unit
 
         $this->containerMock->expects($this->atLeastOnce())
             ->method('get')
-            ->with(AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY)
-            ->willReturn($this->allowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterfaceMock);
+            ->withConsecutive(
+                [AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY],
+                [AllowedProductQuantityCartConnectorDependencyProvider::FACADE_ALLOWED_PRODUCT_QUANTITY],
+            )
+            ->willReturnOnConsecutiveCalls(
+                $this->allowedProductQuantityFacadeMock,
+                $this->allowedProductQuantityFacadeMock,
+            );
 
-        $this->assertInstanceOf(QuoteValidatorInterface::class, $this->allowedProductQuantityCartConnectorBusinessFactory->createQuoteValidator());
+        static::assertInstanceOf(
+            QuoteValidator::class,
+            $this->allowedProductQuantityCartConnectorBusinessFactory->createQuoteValidator(),
+        );
     }
 }

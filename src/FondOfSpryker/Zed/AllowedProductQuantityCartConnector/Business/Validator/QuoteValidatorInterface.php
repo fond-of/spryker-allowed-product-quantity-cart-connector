@@ -11,5 +11,5 @@ interface QuoteValidatorInterface
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    public function validate(QuoteTransfer $quoteTransfer): QuoteTransfer;
+    public function validateAndAppendResult(QuoteTransfer $quoteTransfer): QuoteTransfer;
 }

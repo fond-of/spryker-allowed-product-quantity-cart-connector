@@ -3,8 +3,12 @@
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business;
 
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\AllowedProductQuantityCartConnectorDependencyProvider;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilter;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader\AllowedProductQuantityReader;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader\AllowedProductQuantityReaderInterface;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidator;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidatorInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidator;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidator;
@@ -22,7 +26,7 @@ class AllowedProductQuantityCartConnectorBusinessFactory extends AbstractBusines
      */
     public function createQuoteValidator(): QuoteValidatorInterface
     {
-        return new QuoteValidator($this->createItemValidator());
+        return new QuoteValidator($this->createItemsValidator());
     }
 
     /**
@@ -36,13 +40,33 @@ class AllowedProductQuantityCartConnectorBusinessFactory extends AbstractBusines
     }
 
     /**
+     * @return \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidatorInterface
+     */
+    protected function createItemsValidator(): ItemsValidatorInterface
+    {
+        return new ItemsValidator(
+            $this->createAllowedProductQuantityReader(),
+            $this->createItemValidator(),
+        );
+    }
+
+    /**
      * @return \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader\AllowedProductQuantityReaderInterface
      */
     protected function createAllowedProductQuantityReader(): AllowedProductQuantityReaderInterface
     {
         return new AllowedProductQuantityReader(
+            $this->createAbstractSkuFilter(),
             $this->getAllowedProductQuantityFacade(),
         );
+    }
+
+    /**
+     * @return \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface
+     */
+    protected function createAbstractSkuFilter(): AbstractSkuFilterInterface
+    {
+        return new AbstractSkuFilter();
     }
 
     /**

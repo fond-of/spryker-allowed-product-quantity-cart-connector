@@ -2,7 +2,9 @@
 
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader;
 
+use ArrayObject;
 use Codeception\Test\Unit;
+use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface;
 use Generated\Shared\Transfer\AllowedProductQuantityResponseTransfer;
 use Generated\Shared\Transfer\AllowedProductQuantityTransfer;
@@ -15,6 +17,11 @@ class AllowedProductQuantityReaderTest extends Unit
      * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $allowedProductQuantityFacadeMock;
+
+    /**
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $abstractSkuFilterMock;
 
     /**
      * @var \Generated\Shared\Transfer\ItemTransfer|\PHPUnit\Framework\MockObject\MockObject
@@ -48,6 +55,10 @@ class AllowedProductQuantityReaderTest extends Unit
         )->disableOriginalConstructor()
             ->getMock();
 
+        $this->abstractSkuFilterMock = $this->getMockBuilder(AbstractSkuFilterInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->itemTransferMock = $this->getMockBuilder(ItemTransfer::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,6 +74,7 @@ class AllowedProductQuantityReaderTest extends Unit
             ->getMock();
 
         $this->allowedProductQuantityReader = new AllowedProductQuantityReader(
+            $this->abstractSkuFilterMock,
             $this->allowedProductQuantityFacadeMock,
         );
     }
@@ -153,6 +165,31 @@ class AllowedProductQuantityReaderTest extends Unit
         static::assertEquals(
             null,
             $this->allowedProductQuantityReader->getByItem($this->itemTransferMock),
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetGroupedByItems(): void
+    {
+        $abstractSkus = ['FOO-001-001'];
+        $itemTransferMocks = new ArrayObject([$this->itemTransferMock]);
+        $allowedProductQuantityTransferMocks = [$abstractSkus[0] => $this->allowedProductQuantityTransferMock];
+
+        $this->abstractSkuFilterMock->expects(static::atLeastOnce())
+            ->method('filterFromItems')
+            ->with($itemTransferMocks)
+            ->willReturn($abstractSkus);
+
+        $this->allowedProductQuantityFacadeMock->expects(static::atLeastOnce())
+            ->method('findGroupedProductAbstractAllowedQuantitiesByAbstractSkus')
+            ->with($abstractSkus)
+            ->willReturn($allowedProductQuantityTransferMocks);
+
+        static::assertEquals(
+            $allowedProductQuantityTransferMocks,
+            $this->allowedProductQuantityReader->getGroupedByItems($itemTransferMocks),
         );
     }
 }

@@ -22,7 +22,7 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
      */
     public function validateQuote(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
-        return $this->getFactory()->createQuoteValidator()->validate($quoteTransfer);
+        return $this->getFactory()->createQuoteValidator()->validateAndAppendResult($quoteTransfer);
     }
 
     /**
@@ -36,6 +36,6 @@ class AllowedProductQuantityCartConnectorFacade extends AbstractFacade implement
      */
     public function validateQuoteItem(ItemTransfer $itemTransfer): array
     {
-        return $this->getFactory()->createItemValidator()->validate($itemTransfer);
+        return $this->getFactory()->createItemValidator()->validate($itemTransfer)->getArrayCopy();
     }
 }
