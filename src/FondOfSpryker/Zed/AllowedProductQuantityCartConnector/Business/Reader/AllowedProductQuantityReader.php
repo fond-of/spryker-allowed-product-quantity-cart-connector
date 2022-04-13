@@ -11,26 +11,26 @@ use Generated\Shared\Transfer\ProductAbstractTransfer;
 
 class AllowedProductQuantityReader implements AllowedProductQuantityReaderInterface
 {
- /**
-  * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface
-  */
-    protected $allowedProductQuantityFacade;
-
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface|null
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface
      */
     protected $abstractSkuFilter;
 
+     /**
+      * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface
+      */
+    protected $allowedProductQuantityFacade;
+
     /**
+     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface $abstractSkuFilter
      * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Dependency\Facade\AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface $allowedProductQuantityFacade
-     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Filter\AbstractSkuFilterInterface|null $abstractSkuFilter
      */
     public function __construct(
-        AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface $allowedProductQuantityFacade,
-        ?AbstractSkuFilterInterface $abstractSkuFilter = null
+        AbstractSkuFilterInterface $abstractSkuFilter,
+        AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeInterface $allowedProductQuantityFacade
     ) {
-        $this->allowedProductQuantityFacade = $allowedProductQuantityFacade;
         $this->abstractSkuFilter = $abstractSkuFilter;
+        $this->allowedProductQuantityFacade = $allowedProductQuantityFacade;
     }
 
     /**
@@ -68,10 +68,6 @@ class AllowedProductQuantityReader implements AllowedProductQuantityReaderInterf
      */
     public function getGroupedByItems(ArrayObject $itemTransfers): array
     {
-        if ($this->abstractSkuFilter === null) {
-            return [];
-        }
-
         $abstractSkus = $this->abstractSkuFilter->filterFromItems($itemTransfers);
 
         return $this->allowedProductQuantityFacade->findGroupedProductAbstractAllowedQuantitiesByAbstractSkus(

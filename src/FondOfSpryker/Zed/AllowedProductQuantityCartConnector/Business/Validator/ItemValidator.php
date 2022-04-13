@@ -2,6 +2,7 @@
 
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator;
 
+use ArrayObject;
 use FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Reader\AllowedProductQuantityReaderInterface;
 use Generated\Shared\Transfer\AllowedProductQuantityTransfer;
 use Generated\Shared\Transfer\ItemTransfer;
@@ -52,12 +53,12 @@ class ItemValidator implements ItemValidatorInterface
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      * @param \Generated\Shared\Transfer\AllowedProductQuantityTransfer|null $allowedProductQuantityTransfer
      *
-     * @return array<\Generated\Shared\Transfer\MessageTransfer>
+     * @return \ArrayObject<\Generated\Shared\Transfer\MessageTransfer>
      */
     public function validate(
         ItemTransfer $itemTransfer,
         ?AllowedProductQuantityTransfer $allowedProductQuantityTransfer = null
-    ): array {
+    ): ArrayObject {
         if ($allowedProductQuantityTransfer !== null) {
             return $this->doValidate($itemTransfer, $allowedProductQuantityTransfer);
         }
@@ -65,7 +66,7 @@ class ItemValidator implements ItemValidatorInterface
         $allowedProductQuantityTransfer = $this->allowedProductQuantityReader->getByItem($itemTransfer);
 
         if ($allowedProductQuantityTransfer === null) {
-            return [];
+            return new ArrayObject();
         }
 
         return $this->doValidate($itemTransfer, $allowedProductQuantityTransfer);
@@ -75,37 +76,43 @@ class ItemValidator implements ItemValidatorInterface
      * @param \Generated\Shared\Transfer\ItemTransfer $itemTransfer
      * @param \Generated\Shared\Transfer\AllowedProductQuantityTransfer $allowedProductQuantityTransfer
      *
-     * @return array<\Generated\Shared\Transfer\MessageTransfer>
+     * @return \ArrayObject<\Generated\Shared\Transfer\MessageTransfer>
      */
     protected function doValidate(
         ItemTransfer $itemTransfer,
         AllowedProductQuantityTransfer $allowedProductQuantityTransfer
-    ): array {
+    ): ArrayObject {
         $min = $allowedProductQuantityTransfer->getQuantityMin();
         $max = $allowedProductQuantityTransfer->getQuantityMax();
         $interval = $allowedProductQuantityTransfer->getQuantityInterval();
         $quantity = $itemTransfer->getQuantity();
-        $messages = [];
+        $messageTransfers = new ArrayObject();
 
         if ($min !== null && $quantity < $min) {
-            $messages[] = (new MessageTransfer())
+            $messageTransfer = (new MessageTransfer())
                 ->setType(static::MESSAGE_TYPE_ERROR)
                 ->setValue(static::MESSAGE_QUANTITY_MIN_NOT_FULFILLED);
+
+            $messageTransfers->append($messageTransfer);
         }
 
         if ($max !== null && $quantity > $max) {
-            $messages[] = (new MessageTransfer())
+            $messageTransfer = (new MessageTransfer())
                     ->setType(static::MESSAGE_TYPE_ERROR)
                     ->setValue(static::MESSAGE_QUANTITY_MAX_NOT_FULFILLED);
+
+            $messageTransfers->append($messageTransfer);
         }
 
         if ($interval !== null && $quantity % $interval !== 0) {
-            $messages[] = (new MessageTransfer())
+            $messageTransfer = (new MessageTransfer())
                 ->setType(static::MESSAGE_TYPE_ERROR)
                 ->setValue(static::MESSAGE_QUANTITY_INTERVAL_NOT_FULFILLED)
                 ->setParameters([static::INTERVAL_TRANSLATION_PARAMETER => $interval]);
+
+            $messageTransfers->append($messageTransfer);
         }
 
-        return $messages;
+        return $messageTransfers;
     }
 }

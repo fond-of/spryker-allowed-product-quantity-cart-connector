@@ -2,47 +2,32 @@
 
 namespace FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator;
 
+use ArrayObject;
 use Codeception\Test\Unit;
 use Generated\Shared\Transfer\ItemTransfer;
-use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 class QuoteValidatorTest extends Unit
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidator
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $quoteValidator;
+    protected $itemsValidatorMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface
-     */
-    protected $itemValidatorMock;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\QuoteTransfer
+     * @var \Generated\Shared\Transfer\QuoteTransfer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $quoteTransferMock;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\ItemTransfer
+     * @var \Generated\Shared\Transfer\ItemTransfer|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $itemTransferMock;
 
     /**
-     * @var array
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\QuoteValidator
      */
-    private $itemTransfers;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Generated\Shared\Transfer\MessageTransfer
-     */
-    protected $messageTransferMock;
-
-    /**
-     * @var array
-     */
-    private $messageTransfers;
+    protected $quoteValidator;
 
     /**
      * @return void
@@ -51,7 +36,7 @@ class QuoteValidatorTest extends Unit
     {
         parent::_before();
 
-        $this->itemValidatorMock = $this->getMockBuilder(ItemValidatorInterface::class)
+        $this->itemsValidatorMock = $this->getMockBuilder(ItemsValidatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -63,38 +48,33 @@ class QuoteValidatorTest extends Unit
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->messageTransferMock = $this->getMockBuilder(MessageTransfer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->itemTransfers = [
-            $this->itemTransferMock,
-        ];
-
-        $this->messageTransfers = [
-            $this->messageTransferMock,
-        ];
-
-        $this->quoteValidator = new QuoteValidator($this->itemValidatorMock);
+        $this->quoteValidator = new QuoteValidator($this->itemsValidatorMock);
     }
 
     /**
      * @return void
      */
-    public function testValidate(): void
+    public function testValidateAndAppendResult(): void
     {
+        $itemTransfers = new ArrayObject([$this->itemTransferMock]);
+
         $this->quoteTransferMock->expects($this->atLeastOnce())
             ->method('getItems')
-            ->willReturn($this->itemTransfers);
+            ->willReturn($itemTransfers);
 
-        $this->itemValidatorMock->expects($this->atLeastOnce())
-            ->method('validate')
-            ->willReturn($this->messageTransfers);
+        $this->itemsValidatorMock->expects($this->atLeastOnce())
+            ->method('validateAndAppendResult')
+            ->with($itemTransfers)
+            ->willReturn($itemTransfers);
 
-        $this->itemTransferMock->expects($this->atLeastOnce())
-            ->method('addValidationMessage')
-            ->willReturn($this->itemTransferMock);
+        $this->quoteTransferMock->expects(static::atLeastOnce())
+            ->method('setItems')
+            ->with($itemTransfers)
+            ->willReturn($this->quoteTransferMock);
 
-        $this->assertInstanceOf(QuoteTransfer::class, $this->quoteValidator->validate($this->quoteTransferMock));
+        static::assertEquals(
+            $this->quoteTransferMock,
+            $this->quoteValidator->validateAndAppendResult($this->quoteTransferMock),
+        );
     }
 }

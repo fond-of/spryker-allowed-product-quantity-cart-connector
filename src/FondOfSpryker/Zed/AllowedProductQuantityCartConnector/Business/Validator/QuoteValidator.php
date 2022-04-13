@@ -7,16 +7,16 @@ use Generated\Shared\Transfer\QuoteTransfer;
 class QuoteValidator implements QuoteValidatorInterface
 {
     /**
-     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface
+     * @var \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidatorInterface
      */
-    protected $itemValidator;
+    protected $itemsValidator;
 
     /**
-     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemValidatorInterface $quoteItemValidator
+     * @param \FondOfSpryker\Zed\AllowedProductQuantityCartConnector\Business\Validator\ItemsValidatorInterface $itemsValidator
      */
-    public function __construct(ItemValidatorInterface $quoteItemValidator)
+    public function __construct(ItemsValidatorInterface $itemsValidator)
     {
-        $this->itemValidator = $quoteItemValidator;
+        $this->itemsValidator = $itemsValidator;
     }
 
     /**
@@ -24,16 +24,12 @@ class QuoteValidator implements QuoteValidatorInterface
      *
      * @return \Generated\Shared\Transfer\QuoteTransfer
      */
-    public function validate(QuoteTransfer $quoteTransfer): QuoteTransfer
+    public function validateAndAppendResult(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
-        foreach ($quoteTransfer->getItems() as $itemTransfer) {
-            $messages = $this->itemValidator->validate($itemTransfer);
+        $itemTransfers = $quoteTransfer->getItems();
 
-            foreach ($messages as $message) {
-                $itemTransfer->addValidationMessage($message);
-            }
-        }
+        $itemTransfer = $this->itemsValidator->validateAndAppendResult($itemTransfers);
 
-        return $quoteTransfer;
+        return $quoteTransfer->setItems($itemTransfer);
     }
 }
