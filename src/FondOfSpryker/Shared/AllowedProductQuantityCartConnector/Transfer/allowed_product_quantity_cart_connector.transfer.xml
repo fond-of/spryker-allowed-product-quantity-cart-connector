@@ -5,6 +5,8 @@
 
     <transfer name="Item">
         <property name="validationMessages" type="Message[]" singular="validationMessage" />
+        <property name="abstractSku" type="string" />
+        <property name="groupKey" type="string" />
     </transfer>
 
     <transfer name="ProductAbstract">
