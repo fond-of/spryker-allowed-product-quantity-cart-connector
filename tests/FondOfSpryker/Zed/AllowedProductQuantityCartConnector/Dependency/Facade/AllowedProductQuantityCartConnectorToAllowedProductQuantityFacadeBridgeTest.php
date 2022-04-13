@@ -73,7 +73,7 @@ class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTes
 
         static::assertEquals(
             $this->allowedProductQuantityResponseTransferMock,
-            $this->bridge->findProductAbstractAllowedQuantity($this->productAbstractTransferMock)
+            $this->bridge->findProductAbstractAllowedQuantity($this->productAbstractTransferMock),
         );
     }
 
@@ -92,7 +92,7 @@ class AllowedProductQuantityCartConnectorToAllowedProductQuantityFacadeBridgeTes
 
         static::assertEquals(
             $allowedProductQuantityTransferMocks,
-            $this->bridge->findGroupedProductAbstractAllowedQuantitiesByAbstractSkus($abstractSkus)
+            $this->bridge->findGroupedProductAbstractAllowedQuantitiesByAbstractSkus($abstractSkus),
         );
     }
 }
